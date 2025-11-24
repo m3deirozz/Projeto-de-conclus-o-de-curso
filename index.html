@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Guerra Sagrada - Portfólio Oficial</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --cor-telhado:#c56a45; --cor-dourado:#d4af37; }
+  html,body{height:100%;scroll-behavior:smooth;font-family:'Cinzel',serif;overflow-x:hidden;}
+ 
+  #fundo-site{
+    position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;
+    background:url("img/cidade_do_espantalho.png") center/cover no-repeat fixed;
+    transition:background-image 1.2s ease;
+  }
+
+  header{
+    position:fixed;top:0;width:100%;height:80px;z-index:1200;
+    background:rgba(0,0,0,0.38);backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(212,175,55,0.28);
+    padding:0 40px;display:flex;align-items:center;justify-content:space-between;
+  }
+  header h1{color:#fff;font-family:'Cinzel Decorative',cursive;font-size:28px;letter-spacing:2px;}
+
+  .nav{display:flex;gap:28px;align-items:center;}
+  .nav a{color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600;transition:0.3s;}
+  .nav a:hover,.nav a.active{background:rgba(197,106,69,0.45);}
+
+  #menuToggle{
+    display:none;background:none;border:none;cursor:pointer;z-index:1300;
+  }
+  #menuToggle span{
+    display:block;width:34px;height:4px;background:var(--cor-dourado);margin:7px 0;border-radius:3px;transition:0.35s;
+  }
+  #menuToggle.ativo span:nth-child(1){transform:rotate(45deg) translate(10px,10px);}
+  #menuToggle.ativo span:nth-child(2){opacity:0;}
+  #menuToggle.ativo span:nth-child(3){transform:rotate(-45deg) translate(10px,-9px);}
+
+  .menu-lateral{
+    position:fixed;top:0;right:-300px;width:300px;height:100%;background:rgba(15,15,25,0.98);
+    backdrop-filter:blur(20px);z-index:1299;padding-top:100px;transition:right 0.4s ease;
+    border-left:3px solid var(--cor-dourado);box-shadow:-10px 0 40px rgba(0,0,0,0.7);
+  }
+  .menu-lateral.ativo{right:0;}
+  .menu-lateral a{
+    display:block;color:#fff;text-decoration:none;padding:20px 30px;font-size:21px;font-weight:600;
+    border-bottom:1px solid rgba(212,175,55,0.2);
+  }
+  .menu-lateral button#trocarFundo{
+    width:80%;margin:25px auto;display:block;background:none;border:2px solid var(--cor-dourado);
+    color:var(--cor-dourado);padding:14px;border-radius:30px;font-size:16px;font-weight:bold;cursor:pointer;
+  }
+
+  section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 20px;}
+  .bloco-card{
+    background:rgba(10,10,20,0.30);color:#fff;padding:55px 40px;max-width:1100px;width:100%;
+    text-align:center;border-radius:26px;border:1px solid rgba(212,175,55,0.38);
+    box-shadow:0 25px 70px rgba(0,0,0,0.4);backdrop-filter:blur(15px);
+    text-shadow:0 2px 10px rgba(0,0,0,0.9);margin:0 auto;
+  }
+  h2{font-size:56px;margin-bottom:32px;color:#f5e8c8;text-shadow:0 5px 18px rgba(0,0,0,0.8);}
+  .bloco-card p{font-size:21px;line-height:1.85;max-width:820px;margin:0 auto;}
+
+  /* EQUIPE - 3 à esquerda, 3 à direita, perfis menores e elegantes */
+  .equipe-container{
+    display:flex;
+    justify-content:center;
+    gap:80px;
+    flex-wrap:wrap;
+    margin-top:60px;
+  }
+  .coluna-equipe{
+    display:flex;
+    flex-direction:column;
+    gap:32px;
+    align-items:center;
+  }
+  .membro{
+    background:rgba(30,30,50,0.3);
+    padding:20px;
+    border-radius:20px;
+    border:1px solid rgba(212,175,55,0.3);
+    backdrop-filter:blur(10px);
+    text-align:center;
+    width:180px;
+    transition:0.3s;
+  }
+  .membro:hover{transform:translateY(-8px);box-shadow:0 15px 40px rgba(212,175,55,0.3);}
+  .membro img{
+    width:78px;
+    height:78px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid var(--cor-dourado);
+    margin-bottom:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.5);
+  }
+  .membro h3{font-size:17px;margin:10px 0 6px;color:#f5e8c8;}
+  .membro p{font-size:13.5px;opacity:0.9;}
+
+  /* GALERIA - já está perfeita (sem corte, tamanho ideal) */
+  .galeria-fundos{
+    display:flex;gap:40px;padding:40px 20px;overflow-x:auto;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;justify-content:flex-start;width:100%;
+  }
+  .galeria-fundos::-webkit-scrollbar{display:none;}
+  .galeria-fundos img{
+    height:180px;width:auto;flex:0 0 auto;border-radius:18px;cursor:pointer;
+    border:5px solid transparent;box-shadow:0 18px 50px rgba(0,0,0,0.65);
+    object-fit:contain;background:rgba(0,0,0,0.5);padding:10px;
+    transition:all 0.35s ease;scroll-snap-align:center;
+  }
+  .galeria-fundos img:hover{transform:scale(1.1);border-color:var(--cor-dourado);}
+  .galeria-fundos img.ativo{border-color:var(--cor-dourado);box-shadow:0 0 80px rgba(212,175,55,1);}
+
+  #trocarFundo{
+    background:none;border:2px solid var(--cor-dourado);color:var(--cor-dourado);
+    padding:9px 20px;border-radius:30px;cursor:pointer;font-weight:bold;font-size:14px;transition:0.3s;
+  }
+  #trocarFundo:hover{background:var(--cor-dourado);color:#000;}
+
+  #btnTopo{
+    position:fixed;bottom:35px;right:35px;width:70px;height:70px;background:#c56a45;color:white;
+    border:none;border-radius:50%;font-size:36px;font-weight:bold;cursor:pointer;z-index:99999;
+    box-shadow:0 8px 30px rgba(0,0,0,0.7);opacity:0;visibility:hidden;transition:all 0.4s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #btnTopo.mostrar{opacity:1;visibility:visible;}
+  #btnTopo:hover{background:#e07b58;transform:scale(1.15);}
+
+  footer{background:rgba(0,0,0,0.5);color:#ddd;text-align:center;padding:35px;
+    backdrop-filter:blur(12px);border-top:1px solid rgba(212,175,55,0.25);font-size:17px;}
+
+  @media (max-width: 868px){
+    header{padding:0 20px;}
+    header h1{font-size:24px;}
+    .nav{display:none;}
+    #menuToggle{display:block;}
+    h2{font-size:44px;}
+    .bloco-card{padding:45px 30px;}
+    .equipe-container{gap:50px;}
+    .membro{width:160px;}
+    .membro img{width:70px;height:70px;}
+    .galeria-fundos img{height:160px;}
+  }
+</style>
+</head>
+<body>
+<div id="fundo-site"></div>
+
+<header>
+  <h1>A Guerra Sagrada</h1>
+  <nav class="nav">
+    <a href="#inicio" class="active">Início</a>
+    <a href="#equipe">Equipe</a>
+    <a href="#historia">História</a>
+    <a href="#etapas">Etapas</a>
+    <a href="#fundos">Fundos</a>
+    <button id="trocarFundo">Trocar Fundo</button>
+  </nav>
+  <button id="menuToggle" aria-label="Abrir menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<nav class="menu-lateral">
+  <a href="#inicio" class="active">Início</a>
+  <a href="#equipe">Equipe</a>
+  <a href="#historia">História</a>
+  <a href="#etapas">Etapas</a>
+  <a href="#fundos">Fundos</a>
+  <button id="trocarFundo">Trocar Fundo</button>
+</nav>
+
+<main>
+  <section id="inicio"><div class="bloco-card"><h2>A Guerra Sagrada</h2><p>Aqui, cada passo ecoa entre mundos em ruína, e cada escolha carrega o peso da vida e da morte. Prepare-se para uma longa jornada através do caos deixado pelos deuses e pela desesperança dos mortais.</p></div></section>
+  
+  <section id="equipe"><div class="bloco-card"><h2>Equipe</h2>
+    <div class="equipe-container">
+      <div class="coluna-equipe">
+        <div class="membro"><img src="img/lucas.jpg" alt="Lucas"><h3>Lucas Mendes</h3><p>Programador Líder</p></div>
+        <div class="membro"><img src="img/enzo.jpg" alt="Enzo"><h3>Enzo Medeiros</h3><p>Desenvolvedor Web</p></div>
+        <div class="membro"><img src="img/caue.jpg" alt="Cauê"><h3>Cauê Lucca</h3><p>Sub programador</p></div>
+      </div>
+      <div class="coluna-equipe">
+        <div class="membro"><img src="img/andre.jpg" alt="André"><h3>André Luiz</h3><p>Designer</p></div>
+        <div class="membro"><img src="img/gustavo.jpg" alt="Gustavo"><h3>Gustavo Pescuma</h3><p>Analista de Processos</p></div>
+        <div class="membro"><img src="img/Angelina.jpg" alt="Angelina"><h3>Angelina de Brito</h3><p>Designer de Apresentações</p></div>
+      </div>
+    </div>
+  </div></section>
+  
+  <section id="historia"><div class="bloco-card"><h2>História</h2><p>A história se passa em um mundo à beira do colapso, destruído pela disputa entre deuses instáveis e seres humanos desesperados. Nesse cenário, Thanatos, o deus da morte, assume o papel de protagonista ao enfrentar um dilema moral profundo: salvar um lado significa condenar o outro. Cabe ao jogador decidir o rumo desse conflito, influenciando diretamente o destino do próprio mundo.</p></div></section>
+  
+  <section id="etapas"><div class="bloco-card"><h2>Etapas do Jogo</h2><p><strong>Fase 1</strong> — O jogador inicia explorando um mundo em colapso, descobrindo locais, personagens e elementos que revelam a origem do conflito.<br><strong>Fase 2</strong> — Durante a jornada, surgem escolhas importantes e confrontos estratégicos que influenciam diretamente o rumo da história.<br><strong>Fase 3</strong> — A aventura termina na batalha final contra o chefe, onde as decisões tomadas ao longo do jogo definem o destino do mundo.</p></div></section>
+  
+  <section id="fundos"><div class="bloco-card">
+    <h2>Escolher Fundo</h2>
+    <p>Arraste para o lado ou clique</p>
+    <div class="galeria-fundos">
+      <img src="img/cidade_do_espantalho.png" class="ativo" alt="Cidade do Espantalho">
+      <img src="img/fundo_submundo.png" alt="Submundo">
+      <img src="img/céu.png" alt="Céu">
+    </div>
+  </div></section>
+</main>
+
+<button id="btnTopo" aria-label="Voltar ao topo">Up</button>
+
+<footer>© 2025 A Guerra Sagrada — Projeto de conclusão de curso.</footer>
+
+<script>
+  const fundo = document.getElementById('fundo-site');
+  const miniaturas = document.querySelectorAll('.galeria-fundos img');
+  const btnTopo = document.getElementById('btnTopo');
+  const menuToggle = document.getElementById('menuToggle');
+  const menuLateral = document.querySelector('.menu-lateral');
+
+  menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('ativo');
+    menuLateral.classList.toggle('ativo');
+  });
+  document.querySelectorAll('.menu-lateral a').forEach(link => {
+    link.addEventListener('click', () => {
+      menuToggle.classList.remove('ativo');
+      menuLateral.classList.remove('ativo');
+    });
+  });
+
+  function aplicarFundo(url){
+    fundo.style.backgroundImage = `url("${url}")`;
+    miniaturas.forEach(i => i.classList.toggle('ativo', i.src === url));
+    localStorage.setItem('fundoGuerraSagrada', url);
+  }
+  window.addEventListener('load', () => {
+    const salvo = localStorage.getItem('fundoGuerraSagrada');
+    aplicarFundo(salvo || "img/cidade_do_espantalho.png");
+  });
+  miniaturas.forEach(img => img.addEventListener('click', () => aplicarFundo(img.src)));
+  document.querySelectorAll('#trocarFundo').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const atual = localStorage.getItem('fundoGuerraSagrada') || miniaturas[0].src;
+      const index = Array.from(miniaturas).findIndex(i => i.src === atual);
+      aplicarFundo(miniaturas[(index + 1) % miniaturas.length].src);
+    });
+  });
+
+  window.addEventListener('scroll', () => {
+    btnTopo.classList.toggle('mostrar', window.pageYOffset > 300);
+  });
+  btnTopo.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        document.querySelectorAll('.nav a, .menu-lateral a').forEach(a => a.classList.remove('active'));
+        const link = document.querySelector(`.nav a[href="#${entry.target.id}"], .menu-lateral a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+</script>
+</body>
+</html>
